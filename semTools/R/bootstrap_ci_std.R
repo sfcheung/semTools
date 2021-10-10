@@ -21,14 +21,14 @@
 #' @author Shu Fai Cheung (shufai.cheung@gmail.com)
 #'
 #' @examples
-#' 
+#'
 #' library(lavaan)
 #' set.seed(5478374)
 #' n <- 50
 #' x <- runif(n) - .5
 #' m <- .40 * x + rnorm(n, 0, sqrt(1 - .40))
 #' y <- .30 * m + rnorm(n, 0, sqrt(1 - .30))
-#' dat <- data.frame(x = X, y = y, m = m)
+#' dat <- data.frame(x = x, y = y, m = m)
 #' model <-
 #' '
 #' m ~ a*x
