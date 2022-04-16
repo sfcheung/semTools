@@ -58,14 +58,22 @@ standardizedSolution_boot_ci <- function(object,
         stop("Bootstrapping estimates not found. Was se = 'boot'?")
       }
     std_args <- list(...)
-    fct_i <- function(est_i) {
-        object@ParTable$est[object@ParTable$free > 0] <-
-                                      est_i[object@ParTable$free]
-        object@Model <- lavaan::lav_model_set_parameters(object@Model,
-                                                         est_i)
+    ptable <- lavaan::parameterTable(object)
+    p_free <- ptable$free
+    p_est  <- ptable$est
+    fct_i <- function(est_i, p_est, p_free) {
+        # object@ParTable$est[object@ParTable$free > 0] <-
+        #                               est_i[object@ParTable$free]
+        # object@Model <- lavaan::lav_model_set_parameters(object@Model,
+        #                                                  est_i)
+        p_est[p_free] <- est_i
+        GLIST_i <- lavaan::lav_model_set_parameters(object@Model,
+                                                           est_i)@GLIST
         std_args1 <- utils::modifyList(std_args,
                                        list(object = object,
                                             type = type,
+                                            est = p_est,
+                                            GLIST = GLIST_i,
                                             se = FALSE,
                                             zstat = FALSE,
                                             pvalue = FALSE,
@@ -74,7 +82,7 @@ standardizedSolution_boot_ci <- function(object,
         do.call(lavaan::standardizedSolution, std_args1)$est.std
       }
     boot_est <- split(boot_est0, row(boot_est0))
-    out_all <- t(sapply(boot_est, fct_i))
+    out_all <- t(sapply(boot_est, fct_i, p_est = p_est, p_free = p_free))
     # Could have used boot's method but quantile() is good enough.
     boot_ci <- t(apply(out_all, 2, quantile, probs = c((1 - level) / 2,
                                                         1 - (1 - level) / 2),
