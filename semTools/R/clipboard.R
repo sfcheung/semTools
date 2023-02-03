@@ -142,6 +142,7 @@ saveFileLavaan <- function(object, file, what = "summary", tableFormat = FALSE,
 	if (what == "summary") {
 		if (tableFormat) {
 			copySummary(object, file = file, writeArgs = writeArgs)
+      return()
 		} else {
 			write(paste(utils::capture.output(summary(object, rsquare = TRUE, fit = TRUE,
 			                                          standardize = TRUE)),
